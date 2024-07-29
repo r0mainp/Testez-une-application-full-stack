@@ -9,14 +9,24 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
+import { AuthService } from '../../services/auth.service';
+import { throwError } from 'rxjs';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  let authService: AuthService;
+
+  const authServiceMock = {
+    register: jest.fn()
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
+      providers: [
+        { provide: AuthService, useValue: authServiceMock }
+      ],
       imports: [
         BrowserAnimationsModule,
         HttpClientModule,
@@ -31,6 +41,7 @@ describe('RegisterComponent', () => {
 
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
+    authService = TestBed.inject(AuthService);
     fixture.detectChanges();
   });
   
@@ -236,6 +247,20 @@ describe('RegisterComponent', () => {
       const passwordInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="password"]');
 
       expect(passwordInput.classList).toContain('ng-valid');
+    })
+
+    it('should display "An error occured" when login after fails', () => {
+
+      (authService.register as jest.Mock).mockReturnValue(throwError(() => new Error('Register failed')));
+
+      component.submit();
+
+      fixture.detectChanges();
+
+      const errorElement = fixture.debugElement.nativeElement.querySelector('.error');
+
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('An error occurred');
     })
   });
 });
