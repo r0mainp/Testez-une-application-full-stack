@@ -1,16 +1,14 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
 
 import { ListComponent } from './list.component';
-import { Session } from '../../interfaces/session.interface';
 import { SessionApiService } from '../../services/session-api.service';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -22,22 +20,22 @@ describe('ListComponent', () => {
     }
   }
 
-  const mockSessionApiService = {
-    all: jest.fn()
-  };
-
-  const mockSessions: Session[] = [
-    {
+  const mockSessionsAll = {
+    sessions$: of([{
       id: 1,
       name: 'Yoga',
       description: 'Yoga session',
       date: new Date(),
       teacher_id: 1,
-      users: [1, 2],
+      users: [1,2],
       createdAt: new Date(),
       updatedAt: new Date()
-    }
-  ];
+    }])
+  }
+  
+  const mockSessionServiceApi = {
+    all: jest.fn().mockReturnValue(mockSessionsAll.sessions$)
+  };
 
   beforeEach(async () => {
 
@@ -46,15 +44,14 @@ describe('ListComponent', () => {
       imports: [HttpClientModule, MatCardModule, MatIconModule, RouterTestingModule],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
-        { provide: SessionApiService, useValue: mockSessionApiService }
-
+        { provide: SessionApiService, useValue: mockSessionServiceApi },
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
-    (mockSessionApiService.all as jest.Mock).mockReturnValue(of(mockSessions));
+
     fixture.detectChanges();
   });
 
@@ -80,5 +77,29 @@ describe('ListComponent', () => {
       const createButton = fixture.debugElement.nativeElement.querySelector('button[routerLink="create"]');
       expect(createButton).toBeNull();
     })
+
+    it('should show "Edit" button when user is an admin', fakeAsync(() => {
+      mockSessionService.sessionInformation.admin = true;
+
+      fixture.detectChanges();
+      tick();
+      fixture.whenStable();
+      fixture.detectChanges();
+      const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
+      fixture.componentInstance.sessions$.subscribe(session => console.log(session))
+      expect(updateButton).not.toBeNull();
+      expect(updateButton.textContent).toContain('Edit');
+    }))
+
+    it('should hide "Edit" button when user is not an admin', fakeAsync(() => {
+      mockSessionService.sessionInformation.admin = false;
+
+      fixture.detectChanges();
+      tick();
+      fixture.whenStable();
+      fixture.detectChanges();
+      const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
+      expect(updateButton).toBeNull();
+    }))
   })
 });
