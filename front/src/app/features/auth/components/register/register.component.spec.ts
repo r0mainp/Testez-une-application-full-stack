@@ -40,7 +40,7 @@ describe('RegisterComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should indicate an error when email is empty', () => {
+    it('should show error when email is empty', () => {
       component.form.controls['email'].setValue('');
 
       component.form.controls['email'].markAsTouched();
@@ -53,7 +53,7 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when email is invalid', () => {
+    it('should show error when email is invalid', () => {
 
       component.form.controls['email'].setValue('invalidEmail');
 
@@ -67,7 +67,7 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when password is empty', () => {
+    it('should show error when password is empty', () => {
       component.form.controls['password'].setValue('');
 
       component.form.controls['password'].markAsTouched();
@@ -80,7 +80,7 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when password length < 3', () => {
+    it('should show error when password length < 3', () => {
       component.form.controls['password'].setValue('te');
 
       component.form.controls['password'].markAsTouched();
@@ -93,7 +93,7 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when password length > 40', () => {
+    it('should show error when password length > 40', () => {
       component.form.controls['password'].setValue('This is a string with exactly forty-one chars.');
 
       component.form.controls['password'].markAsTouched();
@@ -105,8 +105,8 @@ describe('RegisterComponent', () => {
 
       expect(passwordInput.classList).toContain('ng-invalid');
     });
-    //
-    it('should indicate an error when firstName is empty', () => {
+
+    it('should show error when firstName is empty', () => {
       component.form.controls['firstName'].setValue('');
 
       component.form.controls['firstName'].markAsTouched();
@@ -119,7 +119,7 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when firstName length < 3', () => {
+    it('should show error when firstName length < 3', () => {
       component.form.controls['firstName'].setValue('te');
 
       component.form.controls['firstName'].markAsTouched();
@@ -132,7 +132,7 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate an error when firstName length > 20', () => {
+    it('should show error when firstName length > 20', () => {
       component.form.controls['firstName'].setValue('This is exactly twenty-one');
 
       component.form.controls['firstName'].markAsTouched();
@@ -145,7 +145,59 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
-    it('should indicate no error when firstName is valid', () => {
+    it('should show error when lastName is empty', () => {
+      component.form.controls['lastName'].setValue('');
+
+      component.form.controls['lastName'].markAsTouched();
+      component.form.controls['lastName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const lastNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="lastName"]');
+
+      expect(lastNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should show error when lastName length < 3', () => {
+      component.form.controls['lastName'].setValue('te');
+
+      component.form.controls['lastName'].markAsTouched();
+      component.form.controls['lastName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const lastNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="lastName"]');
+
+      expect(lastNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should show error when lastName length > 20', () => {
+      component.form.controls['lastName'].setValue('This is exactly twenty-one');
+
+      component.form.controls['lastName'].markAsTouched();
+      component.form.controls['lastName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const lastNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="lastName"]');
+
+      expect(lastNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should show no error when lastName is valid', () => {
+      component.form.controls['lastName'].setValue('Portier');
+ 
+      component.form.controls['lastName'].markAsTouched();
+      component.form.controls['lastName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const lastNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="lastName"]');
+
+      expect(lastNameInput.classList).toContain('ng-valid');
+    })
+
+    it('should show no error when firstName is valid', () => {
       component.form.controls['firstName'].setValue('Romain');
  
       component.form.controls['firstName'].markAsTouched();
@@ -157,9 +209,9 @@ describe('RegisterComponent', () => {
 
       expect(firstNameInput.classList).toContain('ng-valid');
     })
-    //
 
-    it('should indicate no error when email is valid', () => {
+
+    it('should show no error when email is valid', () => {
       component.form.controls['email'].setValue('test@test.com');
  
       component.form.controls['email'].markAsTouched();
@@ -172,7 +224,7 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-valid');
     })
 
-    it('should indicate no error when password is valid', () => {
+    it('should show no error when password is valid', () => {
 
       component.form.controls['password'].setValue('test');
 
