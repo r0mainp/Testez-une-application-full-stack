@@ -9,17 +9,26 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
-
+import { AuthService } from '../../services/auth.service';
 import { LoginComponent } from './login.component';
+import { throwError } from 'rxjs';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let authService: AuthService;
+
+  const authServiceMock = {
+    login: jest.fn()
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
-      providers: [SessionService],
+      providers: [
+        SessionService,
+        { provide: AuthService, useValue: authServiceMock }
+      ],
       imports: [
         RouterTestingModule,
         BrowserAnimationsModule,
@@ -33,10 +42,112 @@ describe('LoginComponent', () => {
       .compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    authService = TestBed.inject(AuthService);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  describe('Login Unit Test suite', ()=> {
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should indicate an error when email is invalid', () => {
+      // On set le champs avec une string vide
+      component.form.controls['email'].setValue('invalidEmail');
+
+      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
+      component.form.controls['email'].markAsTouched();
+      component.form.controls['email'].updateValueAndValidity();
+
+      fixture.detectChanges(); // On mets à jour le dom
+
+      // On récupère l'input
+      const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
+
+      // On verifie s'il a bien la ng-invalid
+      expect(emailInput.classList).toContain('ng-invalid');
+    })
+
+    it('should indicate an error when email is empty', () => {
+      // On set le champs avec une string vide
+      component.form.controls['email'].setValue('');
+
+      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
+      component.form.controls['email'].markAsTouched();
+      component.form.controls['email'].updateValueAndValidity();
+
+      fixture.detectChanges(); // On mets à jour le dom
+
+      // On récupère l'input
+      const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
+
+      // On verifie s'il a bien la ng-invalid
+      expect(emailInput.classList).toContain('ng-invalid');
+    })
+
+    it('should indicate an error when password is empty', () => {
+      // On set le champs avec une string vide
+      component.form.controls['password'].setValue('');
+
+      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
+      component.form.controls['password'].markAsTouched();
+      component.form.controls['password'].updateValueAndValidity();
+
+      fixture.detectChanges(); // On mets à jour le dom
+
+      // On récupère l'input
+      const passwordInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="password"]');
+
+      // On verifie s'il a bien la ng-invalid
+      expect(passwordInput.classList).toContain('ng-invalid');
+    })
+
+    it('should indicate no error when email is valid', () => {
+      // On set le champs avec une string vide
+      component.form.controls['email'].setValue('test@test.com');
+
+      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
+      component.form.controls['email'].markAsTouched();
+      component.form.controls['email'].updateValueAndValidity();
+
+      fixture.detectChanges(); // On mets à jour le dom
+
+      // On récupère l'input
+      const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
+
+      // On verifie s'il a bien la ng-valid
+      expect(emailInput.classList).toContain('ng-valid');
+    })
+
+    it('should indicate no error when password is valid', () => {
+      // On set le champs avec une string vide
+      component.form.controls['password'].setValue('test');
+
+      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
+      component.form.controls['password'].markAsTouched();
+      component.form.controls['password'].updateValueAndValidity();
+
+      fixture.detectChanges(); // On mets à jour le dom
+
+      // On récupère l'input
+      const passwordInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="password"]');
+
+      // On verifie s'il a bien la ng-valid
+      expect(passwordInput.classList).toContain('ng-valid');
+    })
+
+    it('should display "An error occured" when login fails', () => {
+
+      (authService.login as jest.Mock).mockReturnValue(throwError(() => new Error('Login failed')));
+
+      component.submit();
+
+      fixture.detectChanges();
+
+      const errorElement = fixture.debugElement.nativeElement.querySelector('.error');
+
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('An error occurred');
+    })
+  })
 });
