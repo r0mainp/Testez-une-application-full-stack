@@ -105,6 +105,59 @@ describe('RegisterComponent', () => {
 
       expect(passwordInput.classList).toContain('ng-invalid');
     });
+    //
+    it('should indicate an error when firstName is empty', () => {
+      component.form.controls['firstName'].setValue('');
+
+      component.form.controls['firstName'].markAsTouched();
+      component.form.controls['firstName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const firstNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="firstName"]');
+
+      expect(firstNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should indicate an error when firstName length < 3', () => {
+      component.form.controls['firstName'].setValue('te');
+
+      component.form.controls['firstName'].markAsTouched();
+      component.form.controls['firstName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const firstNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="firstName"]');
+
+      expect(firstNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should indicate an error when firstName length > 20', () => {
+      component.form.controls['firstName'].setValue('This is exactly twenty-one');
+
+      component.form.controls['firstName'].markAsTouched();
+      component.form.controls['firstName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const firstNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="firstName"]');
+
+      expect(firstNameInput.classList).toContain('ng-invalid');
+    });
+
+    it('should indicate no error when firstName is valid', () => {
+      component.form.controls['firstName'].setValue('Romain');
+ 
+      component.form.controls['firstName'].markAsTouched();
+      component.form.controls['firstName'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const firstNameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="firstName"]');
+
+      expect(firstNameInput.classList).toContain('ng-valid');
+    })
+    //
 
     it('should indicate no error when email is valid', () => {
       component.form.controls['email'].setValue('test@test.com');
