@@ -15,6 +15,7 @@ import { of, throwError } from 'rxjs';
 import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
+import { LoginRequest } from '../../interfaces/loginRequest.interface';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -162,6 +163,10 @@ describe('LoginComponent', () => {
 
   describe('Login Integration Test suite', ()=>{
 
+    const loginRequest: LoginRequest = {
+      email: 'test@test.com',
+      password: 'password'
+    }
     const loginResponse: SessionInformation = {
       token: 'token',
       type: "type",
@@ -173,7 +178,7 @@ describe('LoginComponent', () => {
     }
 
     it('should successfully log user and redirect to /sessions', ()=>{
-      jest.spyOn(authService, 'login').mockReturnValue(of(loginResponse))
+      const authLoginSpy = jest.spyOn(authService, 'login').mockReturnValue(of(loginResponse))
       const logInSpy = jest.spyOn(sessionService, 'logIn');
       const navigateSpy = jest.spyOn(router, 'navigate');
 
@@ -187,8 +192,8 @@ describe('LoginComponent', () => {
       
       fixture.detectChanges();
 
+      expect(authLoginSpy).toHaveBeenCalledWith(loginRequest);
       expect(logInSpy).toHaveBeenCalledWith(loginResponse);
-
       expect(navigateSpy).toHaveBeenCalledWith(['/sessions']);
     })
   })
