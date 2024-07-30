@@ -10,12 +10,17 @@ import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { RegisterRequest } from '../../interfaces/registerRequest.interface';
+import { Router } from '@angular/router';
+import { NgZone } from '@angular/core';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authService: AuthService;
+  let router: Router;
+  let ngZone: NgZone;
 
   const authServiceMock = {
     register: jest.fn()
@@ -42,6 +47,8 @@ describe('RegisterComponent', () => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
   
@@ -263,4 +270,33 @@ describe('RegisterComponent', () => {
       expect(errorElement.textContent).toContain('An error occurred');
     })
   });
+
+  describe('Register Integration Test suite', ()=>{
+      const registerRequest: RegisterRequest = {
+        email: "test@test.com",
+        firstName: "firstName",
+        lastName: "lastName",
+        password: "password",
+    }
+
+    it('should register user and navigate to /login', ()=>{
+      const registerSpy = jest.spyOn(authService, 'register').mockReturnValue(of(void 0));
+      const navigateSpy = jest.spyOn(router, 'navigate');
+
+      component.form.controls['email'].setValue(registerRequest.email);
+      component.form.controls['password'].setValue(registerRequest.password);
+      component.form.controls['firstName'].setValue(registerRequest.firstName);
+      component.form.controls['lastName'].setValue(registerRequest.lastName);
+      fixture.detectChanges();
+
+      ngZone.run(() => {
+        component.submit();
+      });
+      fixture.detectChanges();
+
+      
+      expect(registerSpy).toHaveBeenCalledWith(registerRequest);
+      expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    })
+  })
 });
