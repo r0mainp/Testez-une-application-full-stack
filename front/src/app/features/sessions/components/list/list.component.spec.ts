@@ -1,11 +1,14 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
 
 import { ListComponent } from './list.component';
+import { SessionApiService } from '../../services/session-api.service';
+import { of } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -17,20 +20,85 @@ describe('ListComponent', () => {
     }
   }
 
+  const mockSessionsAll = {
+    sessions$: of([{
+      id: 1,
+      name: 'Yoga',
+      description: 'Yoga session',
+      date: new Date(),
+      teacher_id: 1,
+      users: [1,2],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }])
+  }
+  
+  const mockSessionServiceApi = {
+    all: jest.fn().mockReturnValue(mockSessionsAll.sessions$)
+  };
+
   beforeEach(async () => {
+
     await TestBed.configureTestingModule({
       declarations: [ListComponent],
-      imports: [HttpClientModule, MatCardModule, MatIconModule],
-      providers: [{ provide: SessionService, useValue: mockSessionService }]
+      imports: [HttpClientModule, MatCardModule, MatIconModule, RouterTestingModule],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: SessionApiService, useValue: mockSessionServiceApi },
+      ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  describe('Session List Unit Test suite', ()=>{
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should show "Create" button when user is an admin', () => {
+      mockSessionService.sessionInformation.admin = true;
+  
+      fixture.detectChanges();
+
+      const createButton = fixture.debugElement.nativeElement.querySelector('button[routerLink="create"]');
+      expect(createButton).not.toBeNull();
+    })
+
+    it('should hide "Create" button when user is not an admin', () => {
+      mockSessionService.sessionInformation.admin = false;
+  
+      fixture.detectChanges();
+
+      const createButton = fixture.debugElement.nativeElement.querySelector('button[routerLink="create"]');
+      expect(createButton).toBeNull();
+    })
+
+    it('should show "Edit" button when user is an admin', fakeAsync(() => {
+      mockSessionService.sessionInformation.admin = true;
+
+      fixture.detectChanges();
+      tick();
+      fixture.whenStable();
+      fixture.detectChanges();
+      const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
+      expect(updateButton).not.toBeNull();
+      expect(updateButton.textContent).toContain('Edit');
+    }))
+
+    it('should hide "Edit" button when user is not an admin', fakeAsync(() => {
+      mockSessionService.sessionInformation.admin = false;
+
+      fixture.detectChanges();
+      tick();
+      fixture.whenStable();
+      fixture.detectChanges();
+      const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
+      expect(updateButton).toBeNull();
+    }))
+  })
 });
