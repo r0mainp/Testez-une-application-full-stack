@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule, } from '@angular/router/testing';
@@ -15,6 +15,9 @@ import { of } from 'rxjs';
 import { SessionApiService } from '../../services/session-api.service';
 import { TeacherService } from 'src/app/services/teacher.service';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NgZone } from '@angular/core';
 
 
 describe('DetailComponent', () => {
@@ -22,6 +25,7 @@ describe('DetailComponent', () => {
   let fixture: ComponentFixture<DetailComponent>; 
   let service: SessionService;
   let datePipe: DatePipe;
+  let ngZone: NgZone;
 
   const mockSessionService = {
     sessionInformation: {
@@ -49,11 +53,20 @@ describe('DetailComponent', () => {
   };
 
   const mockSessionApiService = {
-    detail: jest.fn().mockReturnValue(of(mockedSession))
+    detail: jest.fn().mockReturnValue(of(mockedSession)),
+    delete: jest.fn().mockReturnValue(of({}))
   };
 
   const mockTeacherService = {
     detail: jest.fn().mockReturnValue(of(mockedTeacher))
+  };
+
+  const mockActivatedRoute = {
+    snapshot: {
+      paramMap: {
+        get: jest.fn().mockReturnValue('1')
+      }
+    }
   };
 
   beforeEach(async () => {
@@ -66,21 +79,28 @@ describe('DetailComponent', () => {
         MatIconModule,
         MatButtonModule,
         MatCardModule,
-
+        NoopAnimationsModule,
       ],
       declarations: [DetailComponent], 
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SessionApiService, useValue: mockSessionApiService },
         { provide: TeacherService, useValue: mockTeacherService },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         DatePipe
       ],
     })
       .compileComponents();
-      service = TestBed.inject(SessionService);
+    service = TestBed.inject(SessionService);
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     datePipe = TestBed.inject(DatePipe);
+    ngZone = TestBed.inject(NgZone);
+    fixture.detectChanges();
+    
+    component.session = mockedSession;
+    component.isParticipate = mockedSession.users.some(u => u === mockSessionService.sessionInformation.id);
+    component.teacher = mockedTeacher;
     fixture.detectChanges();
   });
 
@@ -140,6 +160,23 @@ describe('DetailComponent', () => {
       expect(updatedDate.textContent).toContain(`Last update:  ${formattedDate}`);
       
     })
+
+    it("should delete a session", () => {
+
+      fixture.detectChanges();
+      const deleteButton = fixture.debugElement.nativeElement.querySelector('button[color="warn"]');
+      expect(deleteButton).not.toBeNull();
+
+      ngZone.run(() => {
+        deleteButton.click();
+      })
+      fixture.detectChanges();
+
+      expect(mockSessionApiService.delete).toHaveBeenCalledWith(component.sessionId);
+      
+      const snackBarContainer = document.querySelector('.mat-snack-bar-container');
+      expect(snackBarContainer?.textContent).toContain('Session deleted !');
+    });
   })
 });
 
