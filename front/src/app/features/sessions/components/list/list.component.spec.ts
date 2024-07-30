@@ -9,10 +9,12 @@ import { ListComponent } from './list.component';
 import { SessionApiService } from '../../services/session-api.service';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DatePipe } from '@angular/common';
 
 describe('ListComponent', () => {
   let component: ListComponent;
   let fixture: ComponentFixture<ListComponent>;
+  let datePipe: DatePipe;
 
   const mockSessionService = {
     sessionInformation: {
@@ -45,12 +47,14 @@ describe('ListComponent', () => {
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SessionApiService, useValue: mockSessionServiceApi },
+        DatePipe
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
+    datePipe = TestBed.inject(DatePipe);
 
     fixture.detectChanges();
   });
@@ -100,5 +104,20 @@ describe('ListComponent', () => {
       const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
       expect(updateButton).toBeNull();
     }))
+  })
+
+  describe('Session List Integration Test suite', ()=>{
+    it('should display the list of sessions', () => {
+      fixture.detectChanges();
+
+      const sessionCards = fixture.debugElement.nativeElement.querySelectorAll('mat-card.item');
+      expect(sessionCards.length).toBe(1);
+      
+      const firstCard = sessionCards[0];
+      const formattedDate = datePipe.transform(new Date(), 'longDate');
+      expect(firstCard.querySelector('mat-card-title').textContent).toContain('Yoga');
+      expect(firstCard.querySelector('mat-card-subtitle').textContent).toContain(`Session on ${formattedDate}`);
+      expect(firstCard.querySelector('p').textContent).toContain('Yoga session');
+    });
   })
 });
