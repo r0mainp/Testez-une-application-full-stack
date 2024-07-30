@@ -53,7 +53,77 @@ describe('FormComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  
+  describe('Session Form Unit Test suite',()=> {
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should show error if name is empty', ()=> {
+      component.sessionForm?.controls['name'].setValue('');
+ 
+      component.sessionForm?.controls['name'].markAsTouched();
+      component.sessionForm?.controls['name'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const nameInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="name"]');
+
+      expect(nameInput.classList).toContain('ng-invalid');
+    })
+
+    it('should show error if date is empty', ()=> {
+      component.sessionForm?.controls['date'].setValue('');
+ 
+      component.sessionForm?.controls['date'].markAsTouched();
+      component.sessionForm?.controls['date'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const dateInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="date"]');
+
+      expect(dateInput.classList).toContain('ng-invalid');
+    })
+
+    it('should show error if teacher is empty', ()=> {
+      component.sessionForm?.controls['teacher_id'].setValue('');
+ 
+      component.sessionForm?.controls['teacher_id'].markAsTouched();
+      component.sessionForm?.controls['teacher_id'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const teacherInput = fixture.debugElement.nativeElement.querySelector('mat-select[formControlName="teacher_id"]');
+
+      expect(teacherInput.classList).toContain('ng-invalid');
+    })
+
+    it('should show error if description is empty', ()=> {
+      component.sessionForm?.controls['description'].setValue('');
+ 
+      component.sessionForm?.controls['description'].markAsTouched();
+      component.sessionForm?.controls['description'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const descriptionInput = fixture.debugElement.nativeElement.querySelector('textarea[formControlName="description"]');
+
+      expect(descriptionInput.classList).toContain('ng-invalid');
+    })
+
+    it('should show error if description is > 2000', ()=> {
+      const longDescription = 'a'.repeat(2001);
+      component.sessionForm?.controls['description'].setValue(longDescription);
+ 
+      component.sessionForm?.controls['description'].markAsTouched();
+      component.sessionForm?.controls['description'].updateValueAndValidity();
+
+      fixture.detectChanges();
+
+      const descriptionInput = fixture.debugElement.nativeElement.querySelector('textarea[formControlName="description"]');
+
+      expect(descriptionInput.classList).toContain('ng-invalid');
+    })
+
+  })
 });
