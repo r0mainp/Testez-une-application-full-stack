@@ -11,12 +11,18 @@ import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
 import { AuthService } from '../../services/auth.service';
 import { LoginComponent } from './login.component';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
+import { Router } from '@angular/router';
+import { NgZone } from '@angular/core';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authService: AuthService;
+  let sessionService: SessionService;
+  let router: Router;
+  let ngZone: NgZone;
 
   const authServiceMock = {
     login: jest.fn()
@@ -43,6 +49,9 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService);
+    sessionService = TestBed.inject(SessionService);
+    router = TestBed.inject(Router);
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
@@ -148,6 +157,39 @@ describe('LoginComponent', () => {
 
       expect(errorElement).toBeTruthy();
       expect(errorElement.textContent).toContain('An error occurred');
+    })
+  })
+
+  describe('Login Integration Test suite', ()=>{
+
+    const loginResponse: SessionInformation = {
+      token: 'token',
+      type: "type",
+      id: 2,
+      username: "username",
+      firstName: "firstname",
+      lastName: "lastname",
+      admin: true
+    }
+
+    it('should successfully log user and redirect to /sessions', ()=>{
+      jest.spyOn(authService, 'login').mockReturnValue(of(loginResponse))
+      const logInSpy = jest.spyOn(sessionService, 'logIn');
+      const navigateSpy = jest.spyOn(router, 'navigate');
+
+      component.form.controls['email'].setValue('test@test.com');
+      component.form.controls['password'].setValue('password');
+      fixture.detectChanges();
+      
+      ngZone.run(() => {
+        component.submit();
+      });
+      
+      fixture.detectChanges();
+
+      expect(logInSpy).toHaveBeenCalledWith(loginResponse);
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/sessions']);
     })
   })
 });
