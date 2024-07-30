@@ -10,12 +10,18 @@ import { DetailComponent } from './detail.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { Teacher } from 'src/app/interfaces/teacher.interface';
+import { of } from 'rxjs';
+import { SessionApiService } from '../../services/session-api.service';
+import { TeacherService } from 'src/app/services/teacher.service';
+import { DatePipe } from '@angular/common';
 
 
 describe('DetailComponent', () => {
   let component: DetailComponent;
   let fixture: ComponentFixture<DetailComponent>; 
   let service: SessionService;
+  let datePipe: DatePipe;
 
   const mockSessionService = {
     sessionInformation: {
@@ -34,6 +40,22 @@ describe('DetailComponent', () => {
     teacher_id: 1
   }
 
+  const mockedTeacher: Teacher = {
+    id: 1,
+    firstName: 'Romain',
+    lastName: 'Portier',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const mockSessionApiService = {
+    detail: jest.fn().mockReturnValue(of(mockedSession))
+  };
+
+  const mockTeacherService = {
+    detail: jest.fn().mockReturnValue(of(mockedTeacher))
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -47,12 +69,18 @@ describe('DetailComponent', () => {
 
       ],
       declarations: [DetailComponent], 
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: SessionApiService, useValue: mockSessionApiService },
+        { provide: TeacherService, useValue: mockTeacherService },
+        DatePipe
+      ],
     })
       .compileComponents();
       service = TestBed.inject(SessionService);
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
+    datePipe = TestBed.inject(DatePipe);
     fixture.detectChanges();
   });
 
@@ -84,5 +112,34 @@ describe('DetailComponent', () => {
       expect(deleteButton).toBeNull();
     });
   });
+  describe('Session Detail Integration suite', ()=>{
+    it("should display session detail", ()=>{
+      fixture.detectChanges();
+
+      const formattedDate = datePipe.transform(new Date(), 'longDate');
+
+      const sessionTitle = fixture.debugElement.nativeElement.querySelector('h1');
+      expect(sessionTitle.textContent).toContain('Yoga Session');
+      
+      const sessionDate = fixture.debugElement.nativeElement.querySelector('.my2 > div:nth-child(2) > span');
+      expect(sessionDate.textContent).toContain(formattedDate);
+      
+      const sessionDescription = fixture.debugElement.nativeElement.querySelector('.description p');
+      expect(sessionDescription.textContent).toContain('Description:');
+      
+      const descriptionText = fixture.debugElement.nativeElement.querySelector('.description');
+      expect(descriptionText.textContent).toContain('A relaxing yoga session');
+      
+      const teacherName = fixture.debugElement.nativeElement.querySelector('.ml3 > .ml1');
+      expect(teacherName.textContent).toContain('Romain PORTIER');
+      
+      const createdDate = fixture.debugElement.nativeElement.querySelector('.created');
+      expect(createdDate.textContent).toContain(`Create at:  ${formattedDate}`);
+      
+      const updatedDate = fixture.debugElement.nativeElement.querySelector('.updated');
+      expect(updatedDate.textContent).toContain(`Last update:  ${formattedDate}`);
+      
+    })
+  })
 });
 
