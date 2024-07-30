@@ -86,7 +86,6 @@ describe('ListComponent', () => {
       fixture.whenStable();
       fixture.detectChanges();
       const updateButton = fixture.debugElement.nativeElement.querySelector('button[ng-reflect-router-link="update,1"]');
-      fixture.componentInstance.sessions$.subscribe(session => console.log(session))
       expect(updateButton).not.toBeNull();
       expect(updateButton.textContent).toContain('Edit');
     }))
