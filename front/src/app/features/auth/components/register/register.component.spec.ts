@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +15,11 @@ import { RegisterRequest } from '../../interfaces/registerRequest.interface';
 import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 
+
+/**
+ * Test suite for the `RegisterComponent`.
+ * This suite covers the validation logic for the registration form and the integration with the authentication service.
+ */
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
@@ -51,13 +56,21 @@ describe('RegisterComponent', () => {
     ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
-  
+
+  /**
+   * Unit test suite for the registration form in `RegisterComponent`.
+   * This suite includes tests for form validation errors and correctness.
+   */
   describe('Register Unit Test suite', ()=> {
     
     it('should create', () => {
       expect(component).toBeTruthy();
     });
 
+    /**
+     * Tests that an error is shown when the email field is empty.
+     * Verifies that the email input has the `ng-invalid` class when the value is empty.
+     */
     it('should show error when email is empty', () => {
       component.form.controls['email'].setValue('');
 
@@ -71,6 +84,10 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when an invalid email is entered.
+     * Verifies that the email input has the `ng-invalid` class when the value is invalid.
+     */
     it('should show error when email is invalid', () => {
 
       component.form.controls['email'].setValue('invalidEmail');
@@ -85,6 +102,10 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the password field is empty.
+     * Verifies that the password input has the `ng-invalid` class when the value is empty.
+     */
     it('should show error when password is empty', () => {
       component.form.controls['password'].setValue('');
 
@@ -98,6 +119,10 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the password length is less than 3 characters.
+     * Verifies that the password input has the `ng-invalid` class when the value is too short.
+     */
     it('should show error when password length < 3', () => {
       component.form.controls['password'].setValue('te');
 
@@ -111,6 +136,10 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the password length exceeds 40 characters.
+     * Verifies that the password input has the `ng-invalid` class when the value is too long.
+     */
     it('should show error when password length > 40', () => {
       component.form.controls['password'].setValue('This is a string with exactly forty-one chars.');
 
@@ -124,6 +153,10 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the first name field is empty.
+     * Verifies that the first name input has the `ng-invalid` class when the value is empty.
+     */
     it('should show error when firstName is empty', () => {
       component.form.controls['firstName'].setValue('');
 
@@ -137,6 +170,7 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
+    
     it('should show error when firstName length < 3', () => {
       component.form.controls['firstName'].setValue('te');
 
@@ -150,6 +184,10 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the first name length exceeds 20 characters.
+     * Verifies that the first name input has the `ng-invalid` class when the value is too long.
+     */
     it('should show error when firstName length > 20', () => {
       component.form.controls['firstName'].setValue('This is exactly twenty-one');
 
@@ -163,6 +201,10 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the last name field is empty.
+     * Verifies that the last name input has the `ng-invalid` class when the value is empty.
+     */
     it('should show error when lastName is empty', () => {
       component.form.controls['lastName'].setValue('');
 
@@ -176,6 +218,10 @@ describe('RegisterComponent', () => {
       expect(lastNameInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the last name length is less than 3 characters.
+     * Verifies that the last name input has the `ng-invalid` class when the value is too short.
+     */
     it('should show error when lastName length < 3', () => {
       component.form.controls['lastName'].setValue('te');
 
@@ -189,6 +235,10 @@ describe('RegisterComponent', () => {
       expect(lastNameInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that an error is shown when the last name length exceeds 20 characters.
+     * Verifies that the last name input has the `ng-invalid` class when the value is too long.
+     */
     it('should show error when lastName length > 20', () => {
       component.form.controls['lastName'].setValue('This is exactly twenty-one');
 
@@ -202,6 +252,10 @@ describe('RegisterComponent', () => {
       expect(lastNameInput.classList).toContain('ng-invalid');
     });
 
+    /**
+     * Tests that no error is shown when the last name is valid.
+     * Verifies that the last name input has the `ng-valid` class when the value is valid.
+     */
     it('should show no error when lastName is valid', () => {
       component.form.controls['lastName'].setValue('Portier');
  
@@ -215,6 +269,10 @@ describe('RegisterComponent', () => {
       expect(lastNameInput.classList).toContain('ng-valid');
     })
 
+    /**
+     * Tests that no error is shown when the first name is valid.
+     * Verifies that the first name input has the `ng-valid` class when the value is valid.
+     */
     it('should show no error when firstName is valid', () => {
       component.form.controls['firstName'].setValue('Romain');
  
@@ -228,7 +286,10 @@ describe('RegisterComponent', () => {
       expect(firstNameInput.classList).toContain('ng-valid');
     })
 
-
+    /**
+     * Tests that no error is shown when the email is valid.
+     * Verifies that the email input has the `ng-valid` class when the value is valid.
+     */
     it('should show no error when email is valid', () => {
       component.form.controls['email'].setValue('test@test.com');
  
@@ -242,6 +303,10 @@ describe('RegisterComponent', () => {
       expect(emailInput.classList).toContain('ng-valid');
     })
 
+    /**
+     * Tests that no error is shown when the password is valid.
+     * Verifies that the password input has the `ng-valid` class when the value is valid.
+     */
     it('should show no error when password is valid', () => {
 
       component.form.controls['password'].setValue('test');
@@ -256,6 +321,10 @@ describe('RegisterComponent', () => {
       expect(passwordInput.classList).toContain('ng-valid');
     })
 
+    /**
+     * Tests that an error message is displayed when the registration fails.
+     * Verifies that the error message is shown when the registration service returns an error.
+     */
     it('should display "An error occured" when login after fails', () => {
 
       (authService.register as jest.Mock).mockReturnValue(throwError(() => new Error('Register failed')));
@@ -271,6 +340,10 @@ describe('RegisterComponent', () => {
     })
   });
 
+  /**
+   * Integration test suite for the `RegisterComponent`.
+   * This suite verifies the interaction between the component and the authentication service.
+   */
   describe('Register Integration Test suite', ()=>{
       const registerRequest: RegisterRequest = {
         email: "test@test.com",
@@ -279,6 +352,10 @@ describe('RegisterComponent', () => {
         password: "password",
     }
 
+    /**
+     * Tests that the registration process completes successfully and navigates to the login page.
+     * Verifies that the `register` method is called with the correct request and that navigation occurs.
+     */
     it('should register user and navigate to /login', ()=>{
       const registerSpy = jest.spyOn(authService, 'register').mockReturnValue(of(void 0));
       const navigateSpy = jest.spyOn(router, 'navigate');
