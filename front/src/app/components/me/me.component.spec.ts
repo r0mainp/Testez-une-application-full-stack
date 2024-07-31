@@ -15,6 +15,12 @@ import { of } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
+
+/**
+ * Test suite for the `MeComponent`.
+ * This suite tests the functionality and rendering of the `MeComponent`,
+ * including displaying user information and user deletion.
+ */
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
@@ -72,6 +78,9 @@ describe('MeComponent', () => {
     fixture.detectChanges();
   });
 
+  /**
+   * Ensures that the component is created successfully.
+   */
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -83,6 +92,10 @@ describe('MeComponent', () => {
       fixture.detectChanges();
     });
 
+    /**
+     * Tests that basic user information is displayed correctly.
+     * Checks the display of the user's name, email, creation date, and last update date.
+     */
     it('should display basic user informations', ()=>{
       const nameItem = fixture.debugElement.nativeElement.querySelector('p:first-of-type');
       const emailItem = fixture.debugElement.nativeElement.querySelector('p:nth-of-type(2)');
@@ -99,6 +112,10 @@ describe('MeComponent', () => {
       expect(updatedAt.textContent).toContain(`Last update:  ${formattedUpdatedAt}`);
     })
 
+    /**
+     * Tests the display of the delete account section for non-admin users.
+     * Ensures that the delete section and associated button are visible.
+     */
     it('should display the delete account section for non-admin users', () => {
       const deleteSection = fixture.debugElement.nativeElement.querySelector('div.my2');
       const deleteText = deleteSection.querySelector('p');
@@ -111,6 +128,10 @@ describe('MeComponent', () => {
       expect(deleteButton.querySelector('span').textContent).toContain('Detail');
     });
 
+    /**
+     * Tests the display of the admin message for admin users.
+     * Updates the mock user to an admin and checks that the admin message is visible.
+     */
     it('should display the admin message for admin users', () => {
       const adminUser: User = { ...user, admin: true };
       mockUserService.getById.mockReturnValue(of(adminUser));
@@ -122,6 +143,11 @@ describe('MeComponent', () => {
       expect(adminMessage.textContent).toContain('You are admin');
     });
 
+    /**
+     * Tests the deletion of the user account.
+     * Ensures that the delete button is clickable, the delete method is called, 
+     * and the snack bar displays the correct message.
+     */
     it('should delete the user account', () => {
       fixture.detectChanges();
       const deleteButton = fixture.debugElement.nativeElement.querySelector('button[color="warn"]');
