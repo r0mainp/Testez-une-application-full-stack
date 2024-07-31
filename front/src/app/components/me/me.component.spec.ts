@@ -12,11 +12,14 @@ import { DatePipe } from '@angular/common';
 import { User } from 'src/app/interfaces/user.interface';
 import { UserService } from 'src/app/services/user.service';
 import { of } from 'rxjs';
+import { NgZone } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
   let datePipe: DatePipe;
+  let ngZone: NgZone;
 
   const mockSessionService = {
     sessionInformation: {
@@ -27,6 +30,7 @@ describe('MeComponent', () => {
 
   const mockUserService ={
     getById: jest.fn(),
+    delete: jest.fn().mockReturnValue(of({})),
   }
 
   const user: User = {
@@ -49,7 +53,8 @@ describe('MeComponent', () => {
         MatCardModule,
         MatFormFieldModule,
         MatIconModule,
-        MatInputModule
+        MatInputModule,
+        NoopAnimationsModule
       ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
@@ -63,6 +68,7 @@ describe('MeComponent', () => {
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
     datePipe = TestBed.inject(DatePipe);
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
@@ -116,5 +122,19 @@ describe('MeComponent', () => {
       expect(adminMessage.textContent).toContain('You are admin');
     });
 
+    it('should delete the user account', () => {
+      fixture.detectChanges();
+      const deleteButton = fixture.debugElement.nativeElement.querySelector('button[color="warn"]');
+
+      ngZone.run(() => {
+        deleteButton.click();
+      })
+      fixture.detectChanges();
+
+      expect(mockUserService.delete).toHaveBeenCalledWith(mockSessionService.sessionInformation.id.toString());
+
+      const snackBarContainer = document.querySelector('.mat-snack-bar-container');
+      expect(snackBarContainer?.textContent).toContain("Your account has been deleted !");
+    });
   })
 });
