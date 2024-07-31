@@ -17,6 +17,11 @@ import { Router } from '@angular/router';
 import { NgZone } from '@angular/core';
 import { LoginRequest } from '../../interfaces/loginRequest.interface';
 
+/**
+ * Test suite for the `LoginComponent`.
+ * This suite tests the functionality of the `LoginComponent`,
+ * including form validation, error handling, and successful login.
+ */
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -56,96 +61,107 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
+  /**
+   * Unit test suite for validating the form in `LoginComponent`.
+   * This suite includes tests for form control errors and validity.
+   */
   describe('Login Unit Test suite', ()=> {
+    /**
+     * Ensures that the component is created successfully.
+     */
     it('should create', () => {
       expect(component).toBeTruthy();
     });
 
+    /**
+     * Tests that an error is indicated when an invalid email is entered.
+     * Verifies that the email input has the `ng-invalid` class when the value is invalid.
+     */
     it('should indicate an error when email is invalid', () => {
-      // On set le champs avec une string vide
       component.form.controls['email'].setValue('invalidEmail');
 
-      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
       component.form.controls['email'].markAsTouched();
       component.form.controls['email'].updateValueAndValidity();
 
-      fixture.detectChanges(); // On mets à jour le dom
+      fixture.detectChanges();
 
-      // On récupère l'input
       const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
 
-      // On verifie s'il a bien la ng-invalid
       expect(emailInput.classList).toContain('ng-invalid');
     })
 
+    /**
+     * Tests that an error is indicated when the email field is empty.
+     * Verifies that the email input has the `ng-invalid` class when the value is empty.
+     */
     it('should indicate an error when email is empty', () => {
-      // On set le champs avec une string vide
       component.form.controls['email'].setValue('');
 
-      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
       component.form.controls['email'].markAsTouched();
       component.form.controls['email'].updateValueAndValidity();
 
-      fixture.detectChanges(); // On mets à jour le dom
+      fixture.detectChanges();
 
-      // On récupère l'input
       const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
 
-      // On verifie s'il a bien la ng-invalid
       expect(emailInput.classList).toContain('ng-invalid');
     })
 
+    /**
+     * Tests that an error is indicated when the password field is empty.
+     * Verifies that the password input has the `ng-invalid` class when the value is empty.
+     */
     it('should indicate an error when password is empty', () => {
-      // On set le champs avec une string vide
       component.form.controls['password'].setValue('');
 
-      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
       component.form.controls['password'].markAsTouched();
       component.form.controls['password'].updateValueAndValidity();
 
-      fixture.detectChanges(); // On mets à jour le dom
+      fixture.detectChanges();
 
-      // On récupère l'input
       const passwordInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="password"]');
 
-      // On verifie s'il a bien la ng-invalid
       expect(passwordInput.classList).toContain('ng-invalid');
     })
 
+    /**
+     * Tests that no error is indicated when a valid email is entered.
+     * Verifies that the email input has the `ng-valid` class when the value is valid.
+     */
     it('should indicate no error when email is valid', () => {
-      // On set le champs avec une string vide
       component.form.controls['email'].setValue('test@test.com');
 
-      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
       component.form.controls['email'].markAsTouched();
       component.form.controls['email'].updateValueAndValidity();
 
-      fixture.detectChanges(); // On mets à jour le dom
+      fixture.detectChanges();
 
-      // On récupère l'input
       const emailInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="email"]');
 
-      // On verifie s'il a bien la ng-valid
       expect(emailInput.classList).toContain('ng-valid');
     })
 
+    /**
+     * Tests that no error is indicated when a valid password is entered.
+     * Verifies that the password input has the `ng-valid` class when the value is valid.
+     */
     it('should indicate no error when password is valid', () => {
-      // On set le champs avec une string vide
       component.form.controls['password'].setValue('test');
 
-      // On utilise les méthodes du reactive form pour focus l'input et update sa validation 
       component.form.controls['password'].markAsTouched();
       component.form.controls['password'].updateValueAndValidity();
 
-      fixture.detectChanges(); // On mets à jour le dom
+      fixture.detectChanges();
 
-      // On récupère l'input
       const passwordInput = fixture.debugElement.nativeElement.querySelector('input[formControlName="password"]');
 
-      // On verifie s'il a bien la ng-valid
       expect(passwordInput.classList).toContain('ng-valid');
     })
 
+    /**
+     * Tests that an error message is displayed when login fails.
+     * Mocks the login service to throw an error and verifies that the error message is shown.
+     */
     it('should display "An error occured" when login fails', () => {
 
       (authService.login as jest.Mock).mockReturnValue(throwError(() => new Error('Login failed')));
@@ -161,6 +177,10 @@ describe('LoginComponent', () => {
     })
   })
 
+  /**
+   * Integration test suite for the `LoginComponent`.
+   * This suite tests the full login flow, including successful login and redirection.
+   */
   describe('Login Integration Test suite', ()=>{
 
     const loginRequest: LoginRequest = {
@@ -177,6 +197,10 @@ describe('LoginComponent', () => {
       admin: true
     }
 
+     /**
+     * Tests that a successful login redirects the user to the `/sessions` route.
+     * Mocks the login service to return a successful response and verifies that the login and redirection occur as expected.
+     */
     it('should successfully log user and redirect to /sessions', ()=>{
       const authLoginSpy = jest.spyOn(authService, 'login').mockReturnValue(of(loginResponse))
       const logInSpy = jest.spyOn(sessionService, 'logIn');
