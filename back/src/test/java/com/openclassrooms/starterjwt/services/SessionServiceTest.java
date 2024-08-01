@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -58,6 +59,15 @@ public class SessionServiceTest {
         Session createdSession = sessionService.create(session);
         assertNotNull(createdSession);
         verify(sessionRepository, times(1)).save(session);
+    }
+
+    @Test
+    public void testUpdateSession(){
+        Session session = new Session();
+        when(sessionRepository.save(any(Session.class))).thenReturn(session);
+        Session updatedSession = sessionService.update(1L,session);
+        assertNotNull(updatedSession);
+        assertEquals(session.getId(), updatedSession.getId());
     }
 
 }
