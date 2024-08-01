@@ -1,5 +1,5 @@
-describe('empty spec', () => {
-  it('passes', () => {
+describe('Register spec', () => {
+  it('Register successfull', () => {
     cy.visit('/register')
 
     cy.intercept('POST', '/api/auth/register', {
