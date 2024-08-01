@@ -1,6 +1,7 @@
 package com.openclassrooms.starterjwt.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -104,6 +105,27 @@ public class SessionServiceTest {
         verify(userRepository, times(1)).findById(1L);
         verify(sessionRepository, times(1)).save(session);
 
+    }
+
+    @Test
+    public void testNoLongerParticipate(){
+        Session session = new Session();
+        User user = new User();
+
+        user.setId(1L);
+        List<User> users = new ArrayList<>();
+        users.add(user);
+
+        session.setUsers(users);
+
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(sessionRepository.save(any(Session.class))).thenReturn(session);
+
+        sessionService.noLongerParticipate(1L, 1L);
+
+        assertFalse(session.getUsers().contains(user));
+        verify(sessionRepository, times(1)).findById(1L);
+        verify(sessionRepository, times(1)).save(session);
     }
 
     // TODO test exceptions
