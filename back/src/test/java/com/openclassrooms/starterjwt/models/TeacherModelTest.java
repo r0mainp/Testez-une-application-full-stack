@@ -1,6 +1,7 @@
 package com.openclassrooms.starterjwt.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,5 +64,32 @@ public class TeacherModelTest {
         assertEquals("Romain", teacher.getFirstName());
         assertEquals(now, teacher.getCreatedAt());
         assertEquals(now, teacher.getUpdatedAt());
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        Teacher teacher1 = Teacher.builder()
+                .id(1L)
+                .lastName("Doe")
+                .firstName("John")
+                .build();
+
+        Teacher teacher2 = Teacher.builder()
+                .id(1L)
+                .lastName("Doe")
+                .firstName("John")
+                .build();
+
+        Teacher teacher3 = Teacher.builder()
+                .id(2L)
+                .lastName("Smith")
+                .firstName("Jane")
+                .build();
+
+        assertEquals(teacher1, teacher2);
+        assertNotEquals(teacher1, teacher3);
+
+        assertEquals(teacher1.hashCode(), teacher2.hashCode());
+        assertNotEquals(teacher1.hashCode(), teacher3.hashCode());
     }
 }
