@@ -45,4 +45,23 @@ public class TeacherModelTest {
         assertTrue(teacherString.contains("createdAt="));
         assertTrue(teacherString.contains("updatedAt="));
     }
+
+    @Test
+    public void testTeacherSettersAndGetters() {
+        LocalDateTime now = LocalDateTime.now();
+
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+        teacher.setLastName("Portier");
+        teacher.setFirstName("Romain");
+        teacher.setCreatedAt(now);
+        teacher.setUpdatedAt(now);
+
+        assertNotNull(teacher);
+        assertEquals(1L, teacher.getId());
+        assertEquals("Portier", teacher.getLastName());
+        assertEquals("Romain", teacher.getFirstName());
+        assertEquals(now, teacher.getCreatedAt());
+        assertEquals(now, teacher.getUpdatedAt());
+    }
 }
