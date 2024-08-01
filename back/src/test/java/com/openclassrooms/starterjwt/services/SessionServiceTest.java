@@ -51,4 +51,13 @@ public class SessionServiceTest {
         verify(sessionRepository, times(1)).findById(1L);
     }
 
+    @Test
+    public void testCreateSession() {
+        Session session = new Session();
+        when(sessionRepository.save(any(Session.class))).thenReturn(session);
+        Session createdSession = sessionService.create(session);
+        assertNotNull(createdSession);
+        verify(sessionRepository, times(1)).save(session);
+    }
+
 }
