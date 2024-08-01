@@ -12,12 +12,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
+/**
+ * Unit tests for the {@link User} class.
+ * 
+ * This class tests the functionality of the {@link User} methods,
+ * including the builder pattern, required arguments constructor, 
+ * getters and setters, and equals and hashCode methods.
+ */
 public class UserModelTest {
+    
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the builder pattern of the {@link User} class.
+     * 
+     * This method verifies that the builder sets all fields correctly and
+     * checks the string representation of the builder.
+     */
     @Test
     public void testUserBuilder() {
         LocalDateTime now = LocalDateTime.now();
@@ -32,7 +49,6 @@ public class UserModelTest {
                 .createdAt(now)
                 .updatedAt(now);
 
-
         User user = builder.build();
         assertNotNull(user);
         assertEquals(1L, user.getId());
@@ -43,7 +59,6 @@ public class UserModelTest {
         assertEquals(true, user.isAdmin());
         assertEquals(now, user.getCreatedAt());
         assertEquals(now, user.getUpdatedAt());
-
 
         String userString = builder.toString();
         assertNotNull(userString);
@@ -57,6 +72,11 @@ public class UserModelTest {
         assertTrue(userString.contains("updatedAt="));
     }
 
+    /**
+     * Tests the required arguments constructor of the {@link User} class.
+     * 
+     * This method verifies that the constructor sets all fields correctly.
+     */
     @Test
     public void testRequiredArgsConstructor() {
         String email = "test@test.com";
@@ -75,34 +95,46 @@ public class UserModelTest {
         assertEquals(admin, user.isAdmin());
     }
 
+    /**
+     * Tests the required arguments constructor of the {@link User} class with null fields.
+     * 
+     * This method verifies that the constructor throws {@link NullPointerException} when
+     * any of the required fields are null.
+     */
     @Test
     public void testRequiredArgsConstructorWithNullFields() {
         assertThrows(NullPointerException.class, () -> {
-            new User(null, "Doe", "John", "password123", true);
+            new User(null, "Portier", "Romain", "password123", true);
         });
 
         assertThrows(NullPointerException.class, () -> {
-            new User("test@test.com", null, "John", "password123", true);
+            new User("test@test.com", null, "Romain", "password123", true);
         });
 
         assertThrows(NullPointerException.class, () -> {
-            new User("test@test.com", "Doe", null, "password123", true);
+            new User("test@test.com", "Portier", null, "password123", true);
         });
 
         assertThrows(NullPointerException.class, () -> {
-            new User("test@test.com", "Doe", "John", null, true);
+            new User("test@test.com", "Portier", "Romain", null, true);
         });
     }
 
+    /**
+     * Tests the getters and setters of the {@link User} class.
+     * 
+     * This method verifies that the setters correctly set the fields
+     * and the getters return the expected values.
+     */
     @Test
     public void testUserSettersAndGetters() {
         LocalDateTime now = LocalDateTime.now();
 
         User user = new User();
         user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setLastName("Doe");
-        user.setFirstName("John");
+        user.setEmail("test@test.com");
+        user.setLastName("Portier");
+        user.setFirstName("Romain");
         user.setPassword("password123");
         user.setAdmin(true);
         user.setCreatedAt(now);
@@ -110,22 +142,28 @@ public class UserModelTest {
 
         assertNotNull(user);
         assertEquals(1L, user.getId());
-        assertEquals("test@example.com", user.getEmail());
-        assertEquals("Doe", user.getLastName());
-        assertEquals("John", user.getFirstName());
+        assertEquals("test@test.com", user.getEmail());
+        assertEquals("Portier", user.getLastName());
+        assertEquals("Romain", user.getFirstName());
         assertEquals("password123", user.getPassword());
         assertEquals(true, user.isAdmin());
         assertEquals(now, user.getCreatedAt());
         assertEquals(now, user.getUpdatedAt());
     }
 
+    /**
+     * Tests the {@link User#equals(Object)} and {@link User#hashCode()} methods.
+     * 
+     * This method verifies that two users with the same id are considered equal and have the same hash code,
+     * and two users with different ids are not equal and have different hash codes.
+     */
     @Test
     public void testEqualsAndHashCode() {
         User user1 = User.builder()
             .id(1L)
             .email("test1@test.com")
-            .lastName("Doe")
-            .firstName("John")
+            .lastName("Portier")
+            .firstName("Romain")
             .password("password123")
             .admin(true)
             .createdAt(LocalDateTime.now())
@@ -135,8 +173,8 @@ public class UserModelTest {
         User user2 = User.builder()
             .id(1L)
             .email("test2@test.com")
-            .lastName("Smith")
-            .firstName("Jane")
+            .lastName("Someone")
+            .firstName("Else")
             .password("password456")
             .admin(false)
             .createdAt(LocalDateTime.now())
@@ -146,8 +184,8 @@ public class UserModelTest {
         User user3 = User.builder()
             .id(2L)
             .email("test3@test.com")
-            .lastName("Brown")
-            .firstName("Emily")
+            .lastName("Another")
+            .firstName("One")
             .password("password789")
             .admin(true)
             .createdAt(LocalDateTime.now())

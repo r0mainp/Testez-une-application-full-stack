@@ -11,13 +11,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
+/**
+ * Unit tests for the {@link Teacher} class.
+ * 
+ * This class tests the functionality of the {@link Teacher} methods,
+ * including the builder pattern, getters and setters, and equals,
+ * and hashCode methods.
+ */
 public class TeacherModelTest {
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
     
+    /**
+     * Tests the builder pattern of the {@link Teacher} class.
+     * 
+     * This method verifies that the builder sets all fields correctly and
+     * checks the string representation of the builder.
+     */
     @Test
     public void testTeacherBuilder() {
         LocalDateTime now = LocalDateTime.now();
@@ -47,6 +63,12 @@ public class TeacherModelTest {
         assertTrue(teacherString.contains("updatedAt="));
     }
 
+    /**
+     * Tests the getters and setters of the {@link Teacher} class.
+     * 
+     * This method verifies that the setters correctly set the fields
+     * and the getters return the expected values.
+     */
     @Test
     public void testTeacherSettersAndGetters() {
         LocalDateTime now = LocalDateTime.now();
@@ -66,6 +88,12 @@ public class TeacherModelTest {
         assertEquals(now, teacher.getUpdatedAt());
     }
 
+    /**
+     * Tests the {@link Teacher#equals(Object)} and {@link Teacher#hashCode()} methods.
+     * 
+     * This method verifies that two teachers with the same id are considered equal and have the same hash code,
+     * and two teachers with different ids are not equal and have different hash codes.
+     */
     @Test
     public void testEqualsAndHashCode() {
         Teacher teacher1 = Teacher.builder()

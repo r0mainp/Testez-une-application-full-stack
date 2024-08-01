@@ -14,12 +14,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
+/**
+ * Unit tests for the {@link Session} class.
+ * 
+ * This class tests the functionality of the {@link Session} methods,
+ * including the builder pattern, getters and setters, toString, equals,
+ * and hashCode methods.
+ */
 public class SessionModelTest {
+
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the builder pattern of the {@link Session} class.
+     * 
+     * This method verifies that the builder sets all fields correctly and
+     * checks the string representation of the builder.
+     */
     @Test
     public void testSessionBuilder() {
         LocalDateTime now = LocalDateTime.now();
@@ -63,6 +80,12 @@ public class SessionModelTest {
         assertTrue(builderString.contains("updatedAt="));
     }
 
+    /**
+     * Tests the getters and setters of the {@link Session} class.
+     * 
+     * This method verifies that the setters correctly set the fields
+     * and the getters return the expected values.
+     */
     @Test
     public void testSessionSettersAndGetters() {
         Session session = new Session();
@@ -95,6 +118,11 @@ public class SessionModelTest {
         assertEquals(now, session.getUpdatedAt());
     }
 
+    /**
+     * Tests the {@link Session#toString()} method.
+     * 
+     * This method verifies that the toString method returns the expected string representation.
+     */
     @Test
     public void testToString() {
         Session session = new Session();
@@ -105,6 +133,12 @@ public class SessionModelTest {
         assertEquals(expectedToString, session.toString());
     }
 
+    /**
+     * Tests the {@link Session#equals(Object)} and {@link Session#hashCode()} methods.
+     * 
+     * This method verifies that two sessions with the same id are considered equal and have the same hash code,
+     * and two sessions with different ids are not equal and have different hash codes.
+     */
     @Test
     public void testEqualsAndHashCode() {
         Session session1 = new Session();
