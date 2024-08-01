@@ -2,6 +2,7 @@ package com.openclassrooms.starterjwt.models;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class UserModelTest {
 
         User.UserBuilder builder = User.builder()
                 .id(1L)
-                .email("test@example.com")
+                .email("test@test.com")
                 .lastName("Romain")
                 .firstName("Portier")
                 .password("password123")
@@ -34,7 +35,7 @@ public class UserModelTest {
         User user = builder.build();
         assertNotNull(user);
         assertEquals(1L, user.getId());
-        assertEquals("test@example.com", user.getEmail());
+        assertEquals("test@test.com", user.getEmail());
         assertEquals("Romain", user.getLastName());
         assertEquals("Portier", user.getFirstName());
         assertEquals("password123", user.getPassword());
@@ -46,12 +47,30 @@ public class UserModelTest {
         String userString = builder.toString();
         assertNotNull(userString);
         assertTrue(userString.contains("User.UserBuilder(id=1"));
-        assertTrue(userString.contains("email=test@example.com"));
+        assertTrue(userString.contains("email=test@test.com"));
         assertTrue(userString.contains("lastName=Romain"));
         assertTrue(userString.contains("firstName=Portier"));
         assertTrue(userString.contains("password=password123"));
         assertTrue(userString.contains("admin=true"));
         assertTrue(userString.contains("createdAt="));
         assertTrue(userString.contains("updatedAt="));
+    }
+
+    @Test
+    public void testRequiredArgsConstructor() {
+        String email = "test@test.com";
+        String lastName = "Portier";
+        String firstName = "Romain";
+        String password = "password123";
+        boolean admin = true;
+
+        User user = new User(email, lastName, firstName, password, admin);
+
+        assertNotNull(user);
+        assertEquals(email, user.getEmail());
+        assertEquals(lastName, user.getLastName());
+        assertEquals(firstName, user.getFirstName());
+        assertEquals(password, user.getPassword());
+        assertEquals(admin, user.isAdmin());
     }
 }
