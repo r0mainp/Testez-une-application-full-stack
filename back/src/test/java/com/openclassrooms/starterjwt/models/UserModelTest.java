@@ -3,6 +3,7 @@ package com.openclassrooms.starterjwt.models;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -72,5 +73,24 @@ public class UserModelTest {
         assertEquals(firstName, user.getFirstName());
         assertEquals(password, user.getPassword());
         assertEquals(admin, user.isAdmin());
+    }
+
+    @Test
+    public void testRequiredArgsConstructorWithNullFields() {
+        assertThrows(NullPointerException.class, () -> {
+            new User(null, "Doe", "John", "password123", true);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            new User("test@test.com", null, "John", "password123", true);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            new User("test@test.com", "Doe", null, "password123", true);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            new User("test@test.com", "Doe", "John", null, true);
+        });
     }
 }
