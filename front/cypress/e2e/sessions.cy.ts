@@ -68,4 +68,32 @@ describe('Session spec', () => {
     
     cy.get('button').contains('Save').click();
   })
+
+  it('Edits a session succesfully', () => {
+    cy.intercept('GET', '**/api/teacher', {
+      fixture: 'teachers.json'
+    }).as('teachers');
+
+    cy.intercept('GET', '**/api/session/1', {
+      fixture: 'session.json'
+    }).as('sessionDetail');
+
+    cy.intercept('PUT', '**/api/session/1', {
+      body: {
+        name: 'Yoga (edited)',
+        date: '2024-08-30',
+        teacher_id: 1,
+        description: 'A relaxing Yoga Session'
+      },
+    });
+    
+    cy.get('button').contains('Edit').click();
+    cy.url().should('include', '/update/1');
+    cy.wait('@teachers');
+    cy.wait('@sessionDetail');
+
+    cy.get('input[formControlName=name]').type(" (edited)")
+    
+    cy.get('button').contains('Save').click();
+  })
 })
