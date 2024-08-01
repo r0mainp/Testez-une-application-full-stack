@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,38 @@ public class SessionModelTest {
         assertEquals("Name", session.getName());
         assertEquals(sessionDate, session.getDate());
         assertEquals("Description", session.getDescription());
+        assertEquals(now, session.getCreatedAt());
+        assertEquals(now, session.getUpdatedAt());
+    }
+
+    @Test
+    public void testSessionSettersAndGetters() {
+        Session session = new Session();
+        LocalDateTime now = LocalDateTime.now();
+        Date sessionDate = new Date();
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+        User user = new User();
+        user.setId(1L);
+        List<User> users = new ArrayList<>();
+        users.add(user);
+
+        session.setId(1L);
+        session.setName("Session Name");
+        session.setDate(sessionDate);
+        session.setDescription("This is a session description.");
+        session.setTeacher(teacher);
+        session.setUsers(users);
+        session.setCreatedAt(now);
+        session.setUpdatedAt(now);
+
+        assertNotNull(session);
+        assertEquals(1L, session.getId());
+        assertEquals("Session Name", session.getName());
+        assertEquals(sessionDate, session.getDate());
+        assertEquals("This is a session description.", session.getDescription());
+        assertEquals(teacher, session.getTeacher());
+        assertEquals(users, session.getUsers());
         assertEquals(now, session.getCreatedAt());
         assertEquals(now, session.getUpdatedAt());
     }
