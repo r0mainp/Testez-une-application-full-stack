@@ -4,7 +4,7 @@ describe('Session spec', () => {
 
   beforeEach(() => {
     cy.login('test@test.com', 'test1234');
-    cy.intercept('GET', '**/api/session', {
+    cy.intercept('GET', '/api/session', {
       fixture: 'sessions.json'
     }).as('sessions');
     cy.wait('@sessions');
@@ -41,5 +41,31 @@ describe('Session spec', () => {
 
     cy.wait('@sessionDetail');
     cy.wait('@teacher');
+  })
+
+  it('Creates a session succesfully', () => {
+    cy.intercept('GET', '**/api/teacher', {
+      fixture: 'teachers.json'
+    }).as('teachers');
+
+    cy.intercept('POST', '**/api/session', {
+      body: {
+        name: 'New Yoga Session',
+        date: '2024-08-30',
+        teacher_id: 1,
+        description: 'A relaxing Yoga Session'
+      },
+    });
+    
+    cy.get('button').contains('Create').click();
+    cy.url().should('include', '/create');
+    cy.wait('@teachers');
+
+    cy.get('input[formControlName=name]').type("New Yoga Session")
+    cy.get('input[formControlName=date]').type("2024-08-30")
+    cy.get('mat-select[formControlName=teacher_id]').click().get('mat-option').contains('Romain').click();
+    cy.get('textarea[formControlName=description]').type("A relaxing Yoga Session")
+    
+    cy.get('button').contains('Save').click();
   })
 })
