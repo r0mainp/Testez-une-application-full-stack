@@ -3,6 +3,7 @@ package com.openclassrooms.starterjwt.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.openclassrooms.starterjwt.exception.BadRequestException;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
@@ -128,6 +130,30 @@ public class SessionServiceTest {
         verify(sessionRepository, times(1)).save(session);
     }
 
-    // TODO test exceptions
+    @Test
+    public void testParticipate_WhenUserAlreadyParticipate(){
+        Session session = new Session();
+        User user = new User();
+
+        user.setId(1L);
+        List<User> users = new ArrayList<>();
+        users.add(user);
+
+        session.setUsers(users);
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        assertThrows(BadRequestException.class, () -> sessionService.participate(1L, 1L));
+    }
+
+    @Test
+    public void testNoLongerParticipate_WhenUserNotParticipating() {
+        Session session = new Session();
+        session.setUsers(new ArrayList<>());
+
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+
+        assertThrows(BadRequestException.class, () -> sessionService.noLongerParticipate(1L, 1L));
+    }
 
 }
