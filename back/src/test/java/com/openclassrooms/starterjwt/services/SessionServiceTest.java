@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,6 +69,13 @@ public class SessionServiceTest {
         Session updatedSession = sessionService.update(1L,session);
         assertNotNull(updatedSession);
         assertEquals(session.getId(), updatedSession.getId());
+    }
+
+    @Test
+    public void testDeleteSession() {
+        doNothing().when(sessionRepository).deleteById(anyLong());
+        sessionService.delete(1L);
+        verify(sessionRepository, times(1)).deleteById(1L);
     }
 
 }
