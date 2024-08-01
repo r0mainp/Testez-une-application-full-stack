@@ -73,5 +73,13 @@ public class SessionModelTest {
         assertEquals(now, session.getUpdatedAt());
     }
 
+    @Test
+    public void testToString() {
+        Session session = new Session();
+        session.setId(1L);
+        session.setName("Name");
 
+        String expectedToString = "Session(id=1, name=Name, date=null, description=null, teacher=null, users=null, createdAt=null, updatedAt=null)";
+        assertEquals(expectedToString, session.toString());
+    }
 }
