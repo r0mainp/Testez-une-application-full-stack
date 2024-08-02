@@ -16,21 +16,37 @@ import org.mockito.MockitoAnnotations;
 import com.openclassrooms.starterjwt.dto.UserDto;
 import com.openclassrooms.starterjwt.models.User;
 
+/**
+ * Unit tests for the {@link UserMapperImpl} class.
+ * <p>
+ * These tests ensure that the methods in {@link UserMapperImpl} correctly map between {@link UserDto}
+ * and {@link User} objects, and handle lists of these objects appropriately.
+ * </p>
+ */
 public class UserMapperTest {
 
     @InjectMocks
-    UserMapperImpl userMapper;
+    private UserMapperImpl userMapper;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-        @Test
+    /**
+     * Tests the conversion of a list of {@link UserDto} objects to a list of {@link User} objects.
+     * <p>
+     * This test creates two {@link UserDto} objects, performs the mapping to {@link User} objects,
+     * and then verifies that the resulting {@link User} objects have the correct properties.
+     * </p>
+     */
+    @Test
     public void testToEntityList() {
 
         LocalDateTime now = LocalDateTime.now();
-
 
         UserDto userDto1 = new UserDto();
         userDto1.setId(1L);
@@ -54,9 +70,7 @@ public class UserMapperTest {
 
         List<UserDto> userDtoList = Arrays.asList(userDto1, userDto2);
 
-
         List<User> userList = userMapper.toEntity(userDtoList);
-
 
         assertEquals(2, userList.size());
 
@@ -81,6 +95,13 @@ public class UserMapperTest {
         assertEquals(now, user2.getUpdatedAt());
     }
 
+    /**
+     * Tests the conversion of a list of {@link User} objects to a list of {@link UserDto} objects.
+     * <p>
+     * This test creates two {@link User} objects, performs the mapping to {@link UserDto} objects,
+     * and then verifies that the resulting {@link UserDto} objects have the correct properties.
+     * </p>
+     */
     @Test
     public void testToDtoList() {
         LocalDateTime now = LocalDateTime.now();

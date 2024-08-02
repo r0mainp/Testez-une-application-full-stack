@@ -1,6 +1,5 @@
 package com.openclassrooms.starterjwt.mapper;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,15 @@ import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.TeacherService;
 import com.openclassrooms.starterjwt.services.UserService;
 
+/**
+ * Unit tests for the {@link SessionMapperImpl} class.
+ * <p>
+ * These tests ensure that the methods in {@link SessionMapperImpl} correctly map between {@link SessionDto}
+ * and {@link Session} objects, and handle lists of these objects appropriately.
+ * </p>
+ */
 public class SessionMapperTest {
+
     @Mock
     private TeacherService teacherService;
 
@@ -31,13 +38,24 @@ public class SessionMapperTest {
     @InjectMocks
     private SessionMapperImpl sessionMapper;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the conversion of a list of {@link SessionDto} objects to a list of {@link Session} objects.
+     * <p>
+     * This test creates two {@link SessionDto} objects with associated {@link Teacher} and {@link User} objects,
+     * mocks the service layer responses, performs the mapping, and then verifies that the resulting {@link Session}
+     * objects have the correct properties and relationships.
+     * </p>
+     */
     @Test
-    public void testToEntityList(){
+    public void testToEntityList() {
         SessionDto sessionDto1 = new SessionDto();
         sessionDto1.setDescription("Description session 1");
         sessionDto1.setTeacher_id(1L);
@@ -92,8 +110,16 @@ public class SessionMapperTest {
         assertTrue(session2.getUsers().stream().anyMatch(user -> user.getId().equals(4L)));
     }
 
+    /**
+     * Tests the conversion of a list of {@link Session} objects to a list of {@link SessionDto} objects.
+     * <p>
+     * This test creates two {@link Session} objects with associated {@link Teacher} and {@link User} objects,
+     * performs the mapping to {@link SessionDto} objects, and then verifies that the resulting DTOs have the correct
+     * properties and relationships.
+     * </p>
+     */
     @Test
-    public void testToDtoList(){
+    public void testToDtoList() {
         // Create first session
         Session session1 = new Session();
         session1.setDescription("Description session 1");
@@ -123,13 +149,13 @@ public class SessionMapperTest {
         user4.setId(4L);
         session2.setUsers(Arrays.asList(user3, user4));
 
-        //Make a list with sessions
+        // Make a list with sessions
         List<Session> sessions = Arrays.asList(session1, session2);
 
         // Call toDto with
         List<SessionDto> sessionDtos = sessionMapper.toDto(sessions);
 
-        //Do the checks
+        // Do the checks
         SessionDto dto1 = sessionDtos.get(0);
         assertEquals("Description session 1", dto1.getDescription());
         assertEquals(1L, dto1.getTeacher_id());

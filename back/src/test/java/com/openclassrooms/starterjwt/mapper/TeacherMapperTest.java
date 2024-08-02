@@ -14,15 +14,33 @@ import org.mockito.MockitoAnnotations;
 import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.models.Teacher;
 
+/**
+ * Unit tests for the {@link TeacherMapperImpl} class.
+ * <p>
+ * These tests ensure that the methods in {@link TeacherMapperImpl} correctly map between {@link TeacherDto}
+ * and {@link Teacher} objects, and handle lists of these objects appropriately.
+ * </p>
+ */
 public class TeacherMapperTest {
+
     @InjectMocks
     private TeacherMapperImpl teacherMapper;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the conversion of a list of {@link TeacherDto} objects to a list of {@link Teacher} objects.
+     * <p>
+     * This test creates two {@link TeacherDto} objects, performs the mapping to {@link Teacher} objects,
+     * and then verifies that the resulting {@link Teacher} objects have the correct properties.
+     * </p>
+     */
     @Test
     public void testToEntityList() {
         LocalDateTime now = LocalDateTime.now();
@@ -62,6 +80,13 @@ public class TeacherMapperTest {
         assertEquals(now, teacher2.getUpdatedAt());
     }
 
+    /**
+     * Tests the conversion of a list of {@link Teacher} objects to a list of {@link TeacherDto} objects.
+     * <p>
+     * This test creates two {@link Teacher} objects, performs the mapping to {@link TeacherDto} objects,
+     * and then verifies that the resulting {@link TeacherDto} objects have the correct properties.
+     * </p>
+     */
     @Test
     public void testToDtoList() {
         LocalDateTime now = LocalDateTime.now();
