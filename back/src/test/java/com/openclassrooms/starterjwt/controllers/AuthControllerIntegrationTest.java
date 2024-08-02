@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.payload.request.LoginRequest;
+import com.openclassrooms.starterjwt.payload.request.SignupRequest;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
@@ -70,7 +71,7 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    public void testLogin_Success() throws Exception {
+    public void testLogin() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@test.com");
         loginRequest.setPassword("password1234");
@@ -85,14 +86,31 @@ public class AuthControllerIntegrationTest {
         when(userRepository.findByEmail(userDetails.getUsername())).thenReturn(Optional.of(user));
 
         mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("mock-jwt-token"))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.username").value("test@test.com"))
-                .andExpect(jsonPath("$.firstName").value("Romain"))
-                .andExpect(jsonPath("$.lastName").value("Portier"))
-                .andExpect(jsonPath("$.admin").value(false));
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").value("mock-jwt-token"))
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.username").value("test@test.com"))
+            .andExpect(jsonPath("$.firstName").value("Romain"))
+            .andExpect(jsonPath("$.lastName").value("Portier"))
+            .andExpect(jsonPath("$.admin").value(false));
+    }
+
+    @Test
+    public void testRegisterUser() throws Exception {
+        SignupRequest signUpRequest = new SignupRequest();
+        signUpRequest.setEmail("test@example.com");
+        signUpRequest.setFirstName("Romain");
+        signUpRequest.setLastName("Portier");
+        signUpRequest.setPassword("password1234");
+
+        when(userRepository.existsByEmail(signUpRequest.getEmail())).thenReturn(false);
+
+        mockMvc.perform(post("/api/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(signUpRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("User registered successfully!"));
     }
 }
