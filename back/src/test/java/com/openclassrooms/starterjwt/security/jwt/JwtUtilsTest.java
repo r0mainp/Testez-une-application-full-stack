@@ -16,6 +16,7 @@ import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtUtilsTest {
 
@@ -55,5 +56,33 @@ public class JwtUtilsTest {
 
         assertEquals("test@test.com", claims.getSubject());
         assertTrue(claims.getExpiration().after(new Date()));
+    }
+
+    @Test
+    public void testGetUserNameFromJwtToken() {
+        String token = Jwts.builder()
+            .setSubject("test@test.com")
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + 600000))
+            .signWith(SignatureAlgorithm.HS512, "testSecretKey")
+            .compact();
+
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+
+        assertEquals("test@test.com", username);
+    }
+
+    @Test
+    public void testValidateJwtToken() {
+        String token = Jwts.builder()
+            .setSubject("test@test.com")
+            .setIssuedAt(new Date())
+            .setExpiration(new Date((new Date()).getTime() + 600000))
+            .signWith(SignatureAlgorithm.HS512, "testSecretKey")
+            .compact();
+
+        boolean isValid = jwtUtils.validateJwtToken(token);
+
+        assertTrue(isValid);
     }
 }
