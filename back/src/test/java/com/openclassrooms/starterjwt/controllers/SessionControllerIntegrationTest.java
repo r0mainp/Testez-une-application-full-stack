@@ -146,4 +146,30 @@ public class SessionControllerIntegrationTest {
                 .andExpect(jsonPath("$.teacher_id").value(1L))
                 .andExpect(jsonPath("$.users").doesNotExist());
     }
+
+    @Test
+    @WithMockUser
+    public void testDelete() throws Exception {
+        when(sessionService.getById(1L)).thenReturn(session);
+
+        mockMvc.perform(delete("/api/session/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void testParticipate() throws Exception {
+        mockMvc.perform(post("/api/session/1/participate/2")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void testNoLongerParticipate() throws Exception {
+        mockMvc.perform(delete("/api/session/1/participate/2")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
