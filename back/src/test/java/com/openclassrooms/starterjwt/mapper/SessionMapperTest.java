@@ -2,7 +2,6 @@ package com.openclassrooms.starterjwt.mapper;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -38,30 +37,59 @@ public class SessionMapperTest {
     }
 
     @Test
-    public void testToEntity(){
-        SessionDto sessionDto = new SessionDto();
-        sessionDto.setDescription("Description");
-        sessionDto.setTeacher_id(1L);
-        sessionDto.setUsers(Arrays.asList(1L, 2L));
+    public void testToEntityList(){
+        SessionDto sessionDto1 = new SessionDto();
+        sessionDto1.setDescription("Description session 1");
+        sessionDto1.setTeacher_id(1L);
+        sessionDto1.setUsers(Arrays.asList(1L, 2L));
 
-        Teacher teacher = new Teacher();
-        teacher.setId(1L);
+        Teacher teacher1 = new Teacher();
+        teacher1.setId(1L);
 
         User user1 = new User();
         user1.setId(1L);
         User user2 = new User();
         user2.setId(2L);
 
-        when(teacherService.findById(1L)).thenReturn(teacher);
+        SessionDto sessionDto2 = new SessionDto();
+        sessionDto2.setDescription("Description session 2");
+        sessionDto2.setTeacher_id(2L);
+        sessionDto2.setUsers(Arrays.asList(3L, 4L));
+
+        Teacher teacher2 = new Teacher();
+        teacher2.setId(2L);
+
+        User user3 = new User();
+        user3.setId(3L);
+        User user4 = new User();
+        user4.setId(4L);
+
+        when(teacherService.findById(1L)).thenReturn(teacher1);
         when(userService.findById(1L)).thenReturn(user1);
         when(userService.findById(2L)).thenReturn(user2);
+        when(teacherService.findById(2L)).thenReturn(teacher2);
+        when(userService.findById(3L)).thenReturn(user3);
+        when(userService.findById(4L)).thenReturn(user4);
 
-        Session session = sessionMapper.toEntity(sessionDto);
+        List<SessionDto> sessionDtos = Arrays.asList(sessionDto1, sessionDto2);
 
-        assertNotNull(session);
-        assertEquals("Description", session.getDescription());
-        assertNotNull(session.getTeacher());
-        assertEquals(2, session.getUsers().size());
+        List<Session> sessions = sessionMapper.toEntity(sessionDtos);
+
+        assertEquals(2, sessions.size());
+
+        Session session1 = sessions.get(0);
+        assertEquals("Description session 1", session1.getDescription());
+        assertEquals(1L, session1.getTeacher().getId());
+        assertEquals(2, session1.getUsers().size());
+        assertTrue(session1.getUsers().stream().anyMatch(user -> user.getId().equals(1L)));
+        assertTrue(session1.getUsers().stream().anyMatch(user -> user.getId().equals(2L)));
+
+        Session session2 = sessions.get(1);
+        assertEquals("Description session 2", session2.getDescription());
+        assertEquals(2L, session2.getTeacher().getId());
+        assertEquals(2, session2.getUsers().size());
+        assertTrue(session2.getUsers().stream().anyMatch(user -> user.getId().equals(3L)));
+        assertTrue(session2.getUsers().stream().anyMatch(user -> user.getId().equals(4L)));
     }
 
     @Test
