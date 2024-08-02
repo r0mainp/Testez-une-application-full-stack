@@ -27,9 +27,18 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 
+/**
+ * Integration tests for the {@link AuthController} class.
+ * <p>
+ * This class tests the authentication and registration endpoints of the {@link AuthController} 
+ * using Spring Boot's MockMvc framework. It mocks dependencies and verifies that the controller's
+ * endpoints function as expected under various scenarios.
+ * </p>
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthControllerIntegrationTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -46,6 +55,11 @@ public class AuthControllerIntegrationTest {
     private User user;
     private UserDetailsImpl userDetails;
 
+    /**
+     * Sets up the test environment before each test method.
+     * Initializes the ObjectMapper, User, and UserDetailsImpl instances
+     * that will be used in the test cases.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -70,6 +84,16 @@ public class AuthControllerIntegrationTest {
             .build();
     }
 
+    /**
+     * Tests the login endpoint of the {@link AuthController}.
+     * <p>
+     * This test verifies that the login endpoint correctly authenticates
+     * a user and returns a JWT token along with user details when valid
+     * credentials are provided.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     public void testLogin() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
@@ -97,6 +121,15 @@ public class AuthControllerIntegrationTest {
             .andExpect(jsonPath("$.admin").value(false));
     }
 
+    /**
+     * Tests the user registration endpoint of the {@link AuthController}.
+     * <p>
+     * This test verifies that the registration endpoint correctly registers
+     * a new user when the provided data is valid and the email is not already taken.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     public void testRegisterUser() throws Exception {
         SignupRequest signUpRequest = new SignupRequest();

@@ -26,6 +26,14 @@ import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.services.SessionService;
 
+/**
+ * Integration tests for the {@link SessionController} class.
+ * <p>
+ * This class tests the various endpoints of the {@link SessionController} 
+ * using Spring Boot's MockMvc framework. It mocks dependencies and verifies 
+ * that the controller's endpoints function as expected under different scenarios.
+ * </p>
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SessionControllerIntegrationTest {
@@ -45,7 +53,12 @@ public class SessionControllerIntegrationTest {
     private Session session;
     private SessionDto sessionDto;
 
-        @BeforeEach
+    /**
+     * Sets up the test environment before each test method.
+     * Initializes the {@link Session} and {@link SessionDto} instances
+     * with sample data that will be used in the test cases.
+     */
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
@@ -70,7 +83,15 @@ public class SessionControllerIntegrationTest {
         sessionDto.setUpdatedAt(LocalDateTime.now());
     }
 
-
+    /**
+     * Tests the {@link SessionController#findAll()} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly retrieves a list of all sessions
+     * and returns the expected data.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testFindAll() throws Exception {
@@ -81,16 +102,25 @@ public class SessionControllerIntegrationTest {
         when(sessionMapper.toDto(sessions)).thenReturn(sessionDtos);
 
         mockMvc.perform(get("/api/session")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].name").value("Test Session"))
-                .andExpect(jsonPath("$[0].description").value("Test Description"))
-                .andExpect(jsonPath("$[0].date").exists())
-                .andExpect(jsonPath("$[0].teacher_id").value(1L))
-                .andExpect(jsonPath("$[0].users").doesNotExist());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id").value(1L))
+            .andExpect(jsonPath("$[0].name").value("Test Session"))
+            .andExpect(jsonPath("$[0].description").value("Test Description"))
+            .andExpect(jsonPath("$[0].date").exists())
+            .andExpect(jsonPath("$[0].teacher_id").value(1L))
+            .andExpect(jsonPath("$[0].users").doesNotExist());
     }
 
+    /**
+     * Tests the {@link SessionController#findById(String)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly retrieves a session by its ID
+     * and returns the expected data.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testFindById() throws Exception {
@@ -98,16 +128,25 @@ public class SessionControllerIntegrationTest {
         when(sessionMapper.toDto(session)).thenReturn(sessionDto);
 
         mockMvc.perform(get("/api/session/1")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Session"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.date").exists())
-                .andExpect(jsonPath("$.teacher_id").value(1L))
-                .andExpect(jsonPath("$.users").doesNotExist());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.name").value("Test Session"))
+            .andExpect(jsonPath("$.description").value("Test Description"))
+            .andExpect(jsonPath("$.date").exists())
+            .andExpect(jsonPath("$.teacher_id").value(1L))
+            .andExpect(jsonPath("$.users").doesNotExist());
     }
 
+    /**
+     * Tests the {@link SessionController#create(SessionDto)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly creates a new session
+     * and returns the created session data.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testCreate() throws Exception {
@@ -116,17 +155,26 @@ public class SessionControllerIntegrationTest {
         when(sessionMapper.toDto(session)).thenReturn(sessionDto);
 
         mockMvc.perform(post("/api/session")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(sessionDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Session"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.date").exists())
-                .andExpect(jsonPath("$.teacher_id").value(1L))
-                .andExpect(jsonPath("$.users").doesNotExist());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(sessionDto)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.name").value("Test Session"))
+            .andExpect(jsonPath("$.description").value("Test Description"))
+            .andExpect(jsonPath("$.date").exists())
+            .andExpect(jsonPath("$.teacher_id").value(1L))
+            .andExpect(jsonPath("$.users").doesNotExist());
     }
 
+    /**
+     * Tests the {@link SessionController#update(String, SessionDto)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly updates an existing session
+     * and returns the updated session data.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testUpdate() throws Exception {
@@ -136,40 +184,66 @@ public class SessionControllerIntegrationTest {
         when(sessionMapper.toDto(session)).thenReturn(sessionDto);
 
         mockMvc.perform(put("/api/session/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(sessionDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Session (edit)"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.date").exists())
-                .andExpect(jsonPath("$.teacher_id").value(1L))
-                .andExpect(jsonPath("$.users").doesNotExist());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(sessionDto)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.name").value("Test Session (edit)"))
+            .andExpect(jsonPath("$.description").value("Test Description"))
+            .andExpect(jsonPath("$.date").exists())
+            .andExpect(jsonPath("$.teacher_id").value(1L))
+            .andExpect(jsonPath("$.users").doesNotExist());
     }
 
+    /**
+     * Tests the {@link SessionController#delete(String)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly deletes a session by its ID.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testDelete() throws Exception {
         when(sessionService.getById(1L)).thenReturn(session);
 
         mockMvc.perform(delete("/api/session/1")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
+    /**
+     * Tests the {@link SessionController#participate(String, String)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly allows a user to participate
+     * in a session by updating the session's participants.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testParticipate() throws Exception {
         mockMvc.perform(post("/api/session/1/participate/2")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
+    /**
+     * Tests the {@link SessionController#noLongerParticipate(String, String)} endpoint.
+     * <p>
+     * This test verifies that the endpoint correctly removes a user from participating
+     * in a session by updating the session's participants.
+     * </p>
+     * 
+     * @throws Exception if an error occurs while performing the request
+     */
     @Test
     @WithMockUser
     public void testNoLongerParticipate() throws Exception {
         mockMvc.perform(delete("/api/session/1/participate/2")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 }
