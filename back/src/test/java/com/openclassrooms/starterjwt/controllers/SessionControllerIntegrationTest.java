@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
-import com.openclassrooms.starterjwt.models.Teacher;
-import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.SessionService;
 
 @SpringBootTest
@@ -51,27 +49,12 @@ public class SessionControllerIntegrationTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // User sessionOwner = User.builder()
-        //     .id(1L)
-        //     .email("test@test.com")
-        //     .firstName("John")
-        //     .lastName("Doe")
-        //     .password("password")
-        //     .admin(false)
-        //     .build();
-        
-        Teacher teacher = Teacher.builder()
-            .id(1L)
-            .firstName("Someone")
-            .lastName("Else")
-            .build();
-
         session = new Session();
         session.setId(1L);
         session.setName("Test Session");
         session.setDate(new Date());
         session.setDescription("Test Description");
-        session.setTeacher(teacher);
+        session.setTeacher(null);
         session.setUsers(null);
         session.setCreatedAt(LocalDateTime.now());
         session.setUpdatedAt(LocalDateTime.now());
@@ -138,6 +121,26 @@ public class SessionControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Test Session"))
+                .andExpect(jsonPath("$.description").value("Test Description"))
+                .andExpect(jsonPath("$.date").exists())
+                .andExpect(jsonPath("$.teacher_id").value(1L))
+                .andExpect(jsonPath("$.users").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser
+    public void testUpdate() throws Exception {
+        sessionDto.setName("Test Session (edit)");
+        when(sessionService.update(1L, session)).thenReturn(session);
+        when(sessionMapper.toEntity(sessionDto)).thenReturn(session);
+        when(sessionMapper.toDto(session)).thenReturn(sessionDto);
+
+        mockMvc.perform(put("/api/session/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(sessionDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Test Session (edit)"))
                 .andExpect(jsonPath("$.description").value("Test Description"))
                 .andExpect(jsonPath("$.date").exists())
                 .andExpect(jsonPath("$.teacher_id").value(1L))
