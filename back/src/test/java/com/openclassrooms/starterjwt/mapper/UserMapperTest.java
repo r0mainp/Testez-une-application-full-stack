@@ -80,4 +80,57 @@ public class UserMapperTest {
         assertEquals(now, user2.getCreatedAt());
         assertEquals(now, user2.getUpdatedAt());
     }
+
+    @Test
+    public void testToDtoList() {
+        LocalDateTime now = LocalDateTime.now();
+
+        User user1 = User.builder()
+                .id(1L)
+                .email("test1@test.com")
+                .firstName("Romain")
+                .lastName("Doe")
+                .password("password1")
+                .admin(true)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+
+        User user2 = User.builder()
+                .id(2L)
+                .email("test2@test.com")
+                .firstName("Someone")
+                .lastName("Else")
+                .password("password2")
+                .admin(false)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+
+        List<User> userList = Arrays.asList(user1, user2);
+
+        List<UserDto> userDtoList = userMapper.toDto(userList);
+
+        assertEquals(2, userDtoList.size());
+
+        UserDto userDto1 = userDtoList.get(0);
+        assertEquals(1L, userDto1.getId());
+        assertEquals("test1@test.com", userDto1.getEmail());
+        assertEquals("Romain", userDto1.getFirstName());
+        assertEquals("Doe", userDto1.getLastName());
+        assertEquals("password1", userDto1.getPassword());
+        assertTrue(userDto1.isAdmin());
+        assertEquals(now, userDto1.getCreatedAt());
+        assertEquals(now, userDto1.getUpdatedAt());
+
+        UserDto userDto2 = userDtoList.get(1);
+        assertEquals(2L, userDto2.getId());
+        assertEquals("test2@test.com", userDto2.getEmail());
+        assertEquals("Someone", userDto2.getFirstName());
+        assertEquals("Else", userDto2.getLastName());
+        assertEquals("password2", userDto2.getPassword());
+        assertFalse(userDto2.isAdmin());
+        assertEquals(now, userDto2.getCreatedAt());
+        assertEquals(now, userDto2.getUpdatedAt());
+    }
 }
