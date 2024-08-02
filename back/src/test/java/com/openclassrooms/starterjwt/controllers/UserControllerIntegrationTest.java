@@ -36,36 +36,36 @@ public class UserControllerIntegrationTest {
     private UserService userService;
 
     private User user;
-    private LocalDateTime now;
+    private UserDto userDto;
 
     @BeforeEach
     public void setUp(){
         MockitoAnnotations.openMocks(this);
 
-        now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         user = User.builder()
             .id(1L)
-            .email("test@example.com")
+            .email("test@test.com")
             .firstName("Romain")
             .lastName("Portier")
             .password("password1234")
             .createdAt(now)
             .updatedAt(now)
             .build();
+        
+        userDto = new UserDto();
+            userDto.setId(1L);
+            userDto.setEmail("test@test.com");
+            userDto.setFirstName("Romain");
+            userDto.setLastName("Portier");
+            userDto.setPassword("password1234");
+            userDto.setCreatedAt(now);
+            userDto.setUpdatedAt(now);
     }
 
     @Test
     @WithMockUser
     public void testFindById()  throws Exception{
-
-        UserDto userDto = new UserDto();
-        userDto.setId(1L);
-        userDto.setEmail("test@test.com");
-        userDto.setFirstName("Romain");
-        userDto.setLastName("Portier");
-        userDto.setPassword("password1234");
-        userDto.setCreatedAt(now);
-        userDto.setUpdatedAt(now);
 
         when(userService.findById(1L)).thenReturn(user);
         when(userMapper.toDto(user)).thenReturn(userDto);
@@ -78,5 +78,15 @@ public class UserControllerIntegrationTest {
             .andExpect(jsonPath("$.firstName").value("Romain"))
             .andExpect(jsonPath("$.lastName").value("Portier"))
             .andExpect(jsonPath("$.password").doesNotExist());
+        }
+
+        @Test
+        @WithMockUser(username = "test@test.com")
+        public void testDelete() throws Exception {
+            when(userService.findById(1L)).thenReturn(user);
+    
+            mockMvc.perform(delete("/api/user/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         }
     }
