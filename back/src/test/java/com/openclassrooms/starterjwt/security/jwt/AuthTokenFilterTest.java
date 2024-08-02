@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.core.userdetails.User.withUsername;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.openclassrooms.starterjwt.security.services.UserDetailsServiceImpl;
 
+/**
+ * Unit test for {@link AuthTokenFilter} using Mockito and JUnit.
+ */
 public class AuthTokenFilterTest {
 
     @InjectMocks
@@ -40,11 +42,20 @@ public class AuthTokenFilterTest {
     @Mock
     private FilterChain filterChain;
 
+    /**
+     * Initializes the mocks before each test.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the {@link AuthTokenFilter#doFilterInternal(HttpServletRequest, HttpServletResponse, FilterChain)}
+     * method to ensure proper behavior when a valid JWT token is provided.
+     *
+     * @throws Exception if an error occurs during the filter execution
+     */
     @Test
     public void testDoFilterInternal() throws Exception {
         String jwt = "valid.jwt.token";

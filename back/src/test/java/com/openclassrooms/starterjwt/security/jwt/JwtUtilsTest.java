@@ -18,11 +18,20 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/**
+ * Unit test for {@link JwtUtils} using Mockito and JUnit.
+ */
 public class JwtUtilsTest {
 
     @InjectMocks
     private JwtUtils jwtUtils;
 
+    /**
+     * Sets up the test environment by initializing mocks and setting private fields via reflection.
+     *
+     * @throws NoSuchFieldException if a field is not found
+     * @throws IllegalAccessException if there is an error accessing the field
+     */
     @BeforeEach
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         MockitoAnnotations.openMocks(this);
@@ -37,6 +46,9 @@ public class JwtUtilsTest {
         expirationField.set(jwtUtils, 600000); // 10 minutes
     }
 
+    /**
+     * Tests the {@link JwtUtils#generateJwtToken(Authentication)} method to ensure a JWT token is correctly generated.
+     */
     @Test
     public void testGenerateJwtToken() {
         UserDetailsImpl userDetails = UserDetailsImpl.builder()
@@ -58,6 +70,9 @@ public class JwtUtilsTest {
         assertTrue(claims.getExpiration().after(new Date()));
     }
 
+    /**
+     * Tests the {@link JwtUtils#getUserNameFromJwtToken(String)} method to ensure the correct username is extracted from the JWT token.
+     */
     @Test
     public void testGetUserNameFromJwtToken() {
         String token = Jwts.builder()
@@ -72,6 +87,9 @@ public class JwtUtilsTest {
         assertEquals("test@test.com", username);
     }
 
+    /**
+     * Tests the {@link JwtUtils#validateJwtToken(String)} method to ensure the JWT token is valid.
+     */
     @Test
     public void testValidateJwtToken() {
         String token = Jwts.builder()

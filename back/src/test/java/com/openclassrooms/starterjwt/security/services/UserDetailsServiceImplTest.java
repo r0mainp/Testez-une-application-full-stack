@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 
+/**
+ * Unit test for {@link UserDetailsServiceImpl} using Mockito and JUnit.
+ */
 public class UserDetailsServiceImplTest {
 
     @Mock
@@ -27,6 +30,9 @@ public class UserDetailsServiceImplTest {
 
     private User user;
 
+    /**
+     * Sets up the test environment by initializing mocks and creating a sample user.
+     */
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -40,6 +46,9 @@ public class UserDetailsServiceImplTest {
             .build();
     }
 
+    /**
+     * Tests the {@link UserDetailsServiceImpl#loadUserByUsername(String)} method to ensure successful loading of user details by username.
+     */
     @Test
     public void testLoadUserByUsername_Success() {
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
@@ -52,6 +61,9 @@ public class UserDetailsServiceImplTest {
         assertEquals(user.getLastName(), ((UserDetailsImpl) userDetails).getLastName());
     }
 
+    /**
+     * Tests the {@link UserDetailsServiceImpl#loadUserByUsername(String)} method to ensure an exception is thrown when the user is not found.
+     */
     @Test
     public void testLoadUserByUsername_UserNotFound() {
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
