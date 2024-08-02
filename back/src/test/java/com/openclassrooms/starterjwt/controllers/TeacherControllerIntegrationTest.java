@@ -18,6 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.mapper.TeacherMapper;
@@ -40,16 +42,15 @@ public class TeacherControllerIntegrationTest {
     @MockBean
     private TeacherMapper teacherMapper;
 
+    private Teacher teacher ;
+    private TeacherDto teacherDto ;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
 
-    @Test
-    @WithMockUser 
-    void testFindAll() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        Teacher teacher = Teacher.builder()
+        teacher = Teacher.builder()
             .id(1L)
             .firstName("Romain")
             .lastName("Portier")
@@ -57,14 +58,17 @@ public class TeacherControllerIntegrationTest {
             .updatedAt(now)
             .build();
 
-        TeacherDto teacherDto = new TeacherDto();
+        teacherDto = new TeacherDto();
             teacherDto.setId(1L);
             teacherDto.setFirstName("Romain");
             teacherDto.setLastName("Portier");
             teacherDto.setCreatedAt(now);
             teacherDto.setUpdatedAt(now);
+    }
 
-
+    @Test
+    @WithMockUser 
+    void testFindAll() throws Exception {
         List<Teacher> teachers = Collections.singletonList(teacher);
         when(teacherService.findAll()).thenReturn(teachers);
         when(teacherMapper.toDto(teachers)).thenReturn(Collections.singletonList(teacherDto));
@@ -75,5 +79,21 @@ public class TeacherControllerIntegrationTest {
         .andExpect(jsonPath("$[0].id").value(1L))
         .andExpect(jsonPath("$[0].firstName").value("Romain"))
         .andExpect(jsonPath("$[0].lastName").value("Portier"));
+    }
+
+    @Test
+    @WithMockUser 
+    public void testFindById() throws Exception {
+
+        when(teacherService.findById(1L)).thenReturn(teacher);
+        when(teacherMapper.toDto(teacher)).thenReturn(teacherDto);
+
+
+        mockMvc.perform(get("/api/teacher/1")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.firstName").value("Romain"))
+            .andExpect(jsonPath("$.lastName").value("Portier"));
     }
 }
