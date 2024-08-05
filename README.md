@@ -10,7 +10,7 @@
 
 We assume MySql is already installed on your computer. If not you can follow this link https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/.
 
-Depending on your root user and password update `spring.datasource.username` and `spring.datasource.password` in `back\src\main\resources\application.properties`.
+Depending on your root user and password update `spring.datasource.username` and `spring.datasource.password` in `back/src/main/resources/application.properties`.
 
 - Run mysql with :
     - `mysql -u root -p` on Mac or Linux
@@ -39,21 +39,21 @@ or create a new user (non admin)
 #### Front
 
 - In the `front` folder run `npm test`
-- once tests are over you can find the coverage report in `front\coverage\jest\lcov-report\index.html` 
+- once tests are over you can find the coverage report in `front/coverage/jest/lcov-report/index.html` 
 
-![Front Report](ressources\docs\front-report.png)
+![Front Report](./ressources/docs/front-report.png)
 
 #### Back
 
 - In the `back` folder run `mvn clean test`
-- once tests are over you can find the coverage report in `back\target\site\jacoco\index.html` 
+- once tests are over you can find the coverage report in `back/target/site/jacoco/index.html` 
 
-![Back Report](ressources\docs\back-report.png)
+![Back Report](./ressources/docs/back-report.png)
 
 #### End to End
 
 - In the `front` folder run `npm run e2e:ci`
 - if your local server is running you'll be ask if you want to use a different port, answer `Y`
-- once tests are over you can find the coverage report in `front\coverage\lcov-report\index.html` 
+- once tests are over you can find the coverage report in `front/coverage/lcov-report/index.html` 
 
-![E2E Report](ressources\docs\e2e-report.png)
+![E2E Report](./ressources/docs/e2e-report.png)
