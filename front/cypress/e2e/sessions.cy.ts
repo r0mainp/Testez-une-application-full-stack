@@ -9,10 +9,10 @@ describe('Session spec', () => {
    * Runs before each test, logging in and intercepting the session API.
    */
   beforeEach(() => {
-    cy.login('test@test.com', 'test1234');
     cy.intercept('GET', '/api/session', {
       fixture: 'sessions.json'
     }).as('sessions');
+    cy.login('test@test.com', 'test1234');
     cy.wait('@sessions');
   });
 
